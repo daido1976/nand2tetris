@@ -2,10 +2,14 @@
 
 Yet another nand2tetris.
 
+- https://github.com/ohbarye/nand2tetris
 - https://github.com/ikenox/nand2tetris
 - https://github.com/y-meguro/nand2tetris
 - https://github.com/snufkon/my_nand2tetris
 - https://github.com/ryo0/nand2tetris
+- https://github.com/havivha/Nand2Tetris
+- https://github.com/xctom/Nand2Tetris
+- https://github.com/sake92/nand2tetris
 
 ## Overview
 
