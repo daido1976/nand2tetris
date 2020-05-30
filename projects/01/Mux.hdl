@@ -3,7 +3,7 @@
 // by Nisan and Schocken, MIT Press.
 // File name: projects/01/Mux.hdl
 
-/** 
+/**
  * Multiplexor:
  * out = a if sel == 0
  *       b otherwise
@@ -14,5 +14,10 @@ CHIP Mux {
     OUT out;
 
     PARTS:
-    // Put your code here:
+    // sel が 0 なら a を、sel が 1 なら b を出力させる
+    Not(in=sel, out=notsel);
+    // sel に Not を噛ませることで「sel が 0 なら a を選択した状態」を作れる
+    And(a=notsel, b=a, out=sela);
+    And(a=sel, b=b, out=selb);
+    Or(a=sela, b=selb, out=out);
 }
