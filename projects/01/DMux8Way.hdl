@@ -16,5 +16,9 @@ CHIP DMux8Way {
     OUT a, b, c, d, e, f, g, h;
 
     PARTS:
-    // Put your code here:
+    // sel[2] === 0 なら abcd のどれか、1 なら efgh のどれかになる
+    DMux(in=in, sel=sel[2], a=outabcd, b=outefgh);
+    // outabcd、outefgh のうち選ばれている方には 1 が入り、そうでない方は 0 が入っている
+    DMux4Way(in=outabcd, sel=sel[0..1], a=a, b=b, c=c, d=d);
+    DMux4Way(in=outefgh, sel=sel[0..1], a=e, b=f, c=g, d=h);
 }
