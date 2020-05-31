@@ -13,6 +13,7 @@ CHIP Or8Way {
     OUT out;
 
     PARTS:
+    // 隣り合うペアで Or して、その結果同士をさらに Or する
     Or(a=in[0], b=in[1], out=out01);
     Or(a=in[2], b=in[3], out=out23);
     Or(a=in[4], b=in[5], out=out45);
