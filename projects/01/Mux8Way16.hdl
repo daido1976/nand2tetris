@@ -24,5 +24,6 @@ CHIP Mux8Way16 {
     PARTS:
     Mux4Way16(a=a, b=b, c=c, d=d, sel=sel[0..1], out=outabcd);
     Mux4Way16(a=e, b=f, c=g, d=h, sel=sel[0..1], out=outefgh);
+    // sel[2] === 0 なら abcd、1 なら efgh になる
     Mux16(a=outabcd, b=outefgh, sel=sel[2], out=out);
 }
