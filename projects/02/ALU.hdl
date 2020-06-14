@@ -61,5 +61,19 @@ CHIP ALU {
 
     // no: 出力 out を反転する
     Not16(in=outf, out=notoutf);
-    Mux16(a=outf, b=notoutf, sel=no, out=out);
+    // out1, out2 は zr 判定のため、msb（most significant bit）は ng 判定のために使う
+    Mux16(a=outf, b=notoutf, sel=no, out=out, out[0..7]=out1, out[8..15]=out2, out[15]=msb);
+
+    // zr: out=0 の場合にのみ true
+    //   つまり out が 0000000000000000 の時に true になる
+    // 入力が 16 あるので二分割してチェック
+    Or8Way(in=out1, out=outformer);
+    Or8Way(in=out2, out=outlatter);
+    // 二分割したどちらとも 0 なら Not（=インバータ）で 1（=true）にする
+    Or(a=outformer, b=outlatter, out=orall);
+    Not(in=orall, out=zr);
+
+    // ng: out<0 の場合にのみ true
+    //   つまり最上位ビットが 1 の時に true になる（正の数の最上位ビットは 0、負の数の最上位ビットは 1 であるため）
+    Or(a=msb, b=false, out=ng);
 }
