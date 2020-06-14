@@ -19,7 +19,7 @@ CHIP RAM8 {
     // address で指定された Register に対して、load が 0 なら読み込み、1 なら書き込みを行う
     // write のための address 指定
     DMux8Way(in=load, sel=address, a=loada, b=loadb, c=loadc, d=loadd, e=loade, f=loadf, g=loadg, h=loadh);
-    // Register 自体は load で指定される read/write に関わらず、値を出力する（write なら新しく書き込まれた値を出力）
+    // Register 自体は load で指定される read/write に関わらず、値を出力する（~write なら新しく書き込まれた値を出力~ write で新しい値が出力されるのは書き込みの次のクロック周期から）
     Register(in=in, load=loada, out=r1);
     Register(in=in, load=loadb, out=r2);
     Register(in=in, load=loadc, out=r3);
