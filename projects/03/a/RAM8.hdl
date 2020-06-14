@@ -5,15 +5,27 @@
 
 /**
  * Memory of 8 registers, each 16 bit-wide. Out holds the value
- * stored at the memory location specified by address. If load==1, then 
- * the in value is loaded into the memory location specified by address 
+ * stored at the memory location specified by address. If load==1, then
+ * the in value is loaded into the memory location specified by address
  * (the loaded value will be emitted to out from the next time step onward).
  */
 
 CHIP RAM8 {
+    // 3 ビットのアドレスで 8 通りまで表現できる
     IN in[16], load, address[3];
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    // write の実装（load が 1 の address に書き込む）
+    DMux8Way(in=load, sel=address, a=loada, b=loadb, c=loadc, d=loadd, e=loade, f=loadf, g=loadg, h=loadh);
+    Register(in=in, load=loada, out=r1);
+    Register(in=in, load=loadb, out=r2);
+    Register(in=in, load=loadc, out=r3);
+    Register(in=in, load=loadd, out=r4);
+    Register(in=in, load=loade, out=r5);
+    Register(in=in, load=loadf, out=r6);
+    Register(in=in, load=loadg, out=r7);
+    Register(in=in, load=loadh, out=r8);
+    // read の実装（上の Register の out も関係あるけど）
+    Mux8Way16(a=r1, b=r2, c=r3, d=r4, e=r5, f=r6, g=r7, h=r8, sel=address, out=out);
 }
