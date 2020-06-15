@@ -14,5 +14,7 @@ CHIP Bit {
     OUT out;
 
     PARTS:
-    // Put your code here:
+    // load=0 なら読み込み（read）、load=1 なら書き込み（write）
+    Mux(a=feedback, b=in, sel=load, out=muxout);
+    DFF(in=muxout, out=out, out=feedback);
 }
