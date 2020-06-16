@@ -16,5 +16,17 @@ CHIP PC {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    // 処理の強さは reset > load > inc の順
+    //
+    // 前回の値（フィードバック）をインクリメントした値を作成
+    Inc16(in=feedback, out=incout);
+    // inc が true だった時はインクリメントした値を選択
+    Mux16(a=feedback, b=incout, sel=inc, out=muxincout);
+    // load が true だった時は入力値をそのまま使う
+    Mux16(a=muxincout, b=in, sel=load, out=muxloadout);
+    // reset が true だった時はインクリメント値や入力に関わらず 0 に戻す
+    Mux16(a=muxloadout, b=false, sel=reset, out=muxresetout);
+    // 各処理を通った値 muxresetout（本来は muxincloadresetout って名前にすべきかも）を
+    // 書き込みモードで Register に登録する
+    Register(in=muxresetout, load=true, out=out, out=feedback);
 }
