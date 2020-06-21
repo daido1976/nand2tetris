@@ -15,4 +15,4 @@ Yet another nand2tetris.
 
 nand2tetris written by [Go](https://github.com/golang/go).
 
-This repository based on [Nand2tetris Software Suite](https://www.nand2tetris.org/software) & [コンピュータシステムの理論と実装](https://www.oreilly.co.jp/books/9784873117126/).
+This repository based on [Nand2tetris Software Suite](https://www.nand2tetris.org/software) & [コンピュータシステムの理論と実装](https://www.oreilly.co.jp/books/9784873117126/). (Origin: [The Elements of Computing Systems: Building a Modern Computer from First Principles](http://f.javier.io/rep/books/The%20Elements%20of%20Computing%20Systems.pdf))
