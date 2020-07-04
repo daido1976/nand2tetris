@@ -37,6 +37,7 @@ CHIP Memory {
 
     PARTS:
     // 上位 2 ビットで RAM か Screen か Keyboard のどれに読み書きするかを決める（load が 0 なら読み込み、1 なら書き込み）
+    // load が 0 の場合は in に何が入ってきても関係なく、指定のアドレスから出力する
     DMux4Way(in=load, sel=address[13..14], a=loadram1, b=loadram2, c=loadscreen, d=loadkeyboard);
     Or(a=loadram1, b=loadram2, out=loadram);
 
@@ -47,6 +48,6 @@ CHIP Memory {
     // 現在押されているキーの ascii コードを出力する
     Keyboard(out=keyboardout);
 
-    // 書き込まれたかどうかに関わらず、上位 2 ビットで指定されたアドレスのメモリ（Screen と Keyboard のメモリマップも含む）から出力する
+    // 上位 2 ビットで指定されたアドレスのメモリ（Screen と Keyboard のメモリマップも含む）から出力する
     Mux4Way16(a=ramout, b=ramout, c=screenout, d=keyboardout, sel=address[13..14], out=out);
 }
