@@ -22,7 +22,7 @@ const (
 )
 
 func main() {
-	f, err := os.Open("./projects/06/add/Add.asm")
+	f, err := os.Open("projects/06/max/Max.asm")
 	if err != nil {
 		fmt.Println("error")
 	}
@@ -32,7 +32,11 @@ func main() {
 
 	for p.hasMoreCommands() {
 		p.advance()
-		fmt.Println(p.commandType(), p.currentCommand)
+		if p.commandType() == A_COMMAND || p.commandType() == L_COMMAND {
+			fmt.Println(p.commandType(), p.currentCommand, "->", p.symbol())
+		} else {
+			fmt.Println(p.commandType(), p.currentCommand)
+		}
 	}
 }
 
@@ -93,4 +97,13 @@ func (p *Parser) commandType() Command {
 	}
 	// dest=comp;jump
 	return C_COMMAND
+}
+
+func (p *Parser) symbol() string {
+	if p.commandType() == A_COMMAND {
+		// A_COMMAND: @Xxx -> Xxx
+		return strings.TrimLeft(p.currentCommand, "@")
+	}
+	// L_COMMAND: (Xxx) -> Xxx
+	return strings.TrimRight(strings.TrimLeft(p.currentCommand, "("), ")")
 }
