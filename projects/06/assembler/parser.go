@@ -12,6 +12,15 @@ type Parser struct {
 	currentCommand string
 }
 
+type Command int
+
+const (
+	N_COMMAND Command = iota // 0
+	A_COMMAND                // 1
+	C_COMMAND                // 2
+	L_COMMAND                // 3
+)
+
 func main() {
 	f, err := os.Open("./projects/06/add/Add.asm")
 	if err != nil {
@@ -23,7 +32,7 @@ func main() {
 
 	for p.hasMoreCommands() {
 		p.advance()
-		fmt.Println(p.currentCommand)
+		fmt.Println(p.commandType(), p.currentCommand)
 	}
 }
 
@@ -67,4 +76,21 @@ func (p *Parser) advance() {
 
 	// remove spaces
 	p.currentCommand = strings.TrimSpace(p.currentCommand)
+}
+
+func (p *Parser) commandType() Command {
+	if p.currentCommand == "" {
+		// empty command
+		return N_COMMAND
+	}
+	if p.currentCommand[0] == '@' {
+		// @Xxx
+		return A_COMMAND
+	}
+	if p.currentCommand[0] == '(' {
+		// (Xxx)
+		return L_COMMAND
+	}
+	// dest=comp;jump
+	return C_COMMAND
 }
