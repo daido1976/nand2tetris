@@ -34,6 +34,9 @@ func main() {
 		p.advance()
 		if p.commandType() == A_COMMAND || p.commandType() == L_COMMAND {
 			fmt.Println(p.commandType(), p.currentCommand, "->", p.symbol())
+		} else if p.commandType() == C_COMMAND {
+			fmt.Println(p.commandType(), p.currentCommand)
+			fmt.Println("dest:"+p.dest(), "comp:"+p.comp(), "jump:"+p.jump())
 		} else {
 			fmt.Println(p.commandType(), p.currentCommand)
 		}
@@ -106,4 +109,33 @@ func (p *Parser) symbol() string {
 	}
 	// L_COMMAND: (Xxx) -> Xxx
 	return strings.TrimRight(strings.TrimLeft(p.currentCommand, "("), ")")
+}
+
+func (p *Parser) dest() string {
+	tokens := strings.Split(p.currentCommand, "=")
+	if len(tokens) <= 1 {
+		return "なし"
+	}
+	return tokens[0]
+}
+
+func (p *Parser) comp() string {
+	tokens := strings.Split(p.currentCommand, "=")
+	if len(tokens) <= 1 {
+		// comp;jump
+		t := strings.Split(tokens[0], ";")
+		return t[0]
+	}
+	// dest=comp;jump or dest=comp -> [dest comp;jump] or [dest comp]
+	t := strings.Split(tokens[1], ";")
+	// t == [comp jump] or [comp]
+	return t[0]
+}
+
+func (p *Parser) jump() string {
+	tokens := strings.Split(p.currentCommand, ";")
+	if len(tokens) <= 1 {
+		return "なし"
+	}
+	return tokens[len(tokens)-1]
 }
