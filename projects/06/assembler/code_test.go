@@ -72,3 +72,25 @@ func TestCode_Comp(t *testing.T) {
 		}
 	}
 }
+
+var expectsJump = []expectData{
+	{"", "000"},
+	{"JGT", "001"},
+	{"JEQ", "010"},
+	{"JGE", "011"},
+	{"JLT", "100"},
+	{"JNE", "101"},
+	{"JLE", "110"},
+	{"JMP", "111"},
+	{"INVALID", ""},
+}
+
+func TestCode_Jump(t *testing.T) {
+	for _, v := range expectsJump {
+		out := CodeJump(v.in)
+		if v.out != out {
+			t.Errorf("CodeJump(%v) returns %v, but wants %v",
+				v.in, out, v.out)
+		}
+	}
+}

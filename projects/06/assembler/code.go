@@ -90,3 +90,27 @@ func CodeComp(mnemonic string) string {
 	// FIXME: error を返すようにした方がいいかも
 	return ""
 }
+
+// CodeJump returns binary code of jump mnemonic
+func CodeJump(mnemonic string) string {
+	switch mnemonic {
+	case "":
+		return "000"
+	case "JGT":
+		return "001"
+	case "JEQ":
+		return "010"
+	case "JGE":
+		return "011"
+	case "JLT":
+		return "100"
+	case "JNE":
+		return "101"
+	case "JLE":
+		return "110"
+	case "JMP":
+		return "111"
+	}
+	// FIXME: error を返すようにした方がいいかも
+	return ""
+}
