@@ -24,6 +24,23 @@ func main() {
 		fmt.Println("error")
 	}
 
+	// initialize
+	st := NewSymbolTable()
+	romAddress := 0
+
+	// first path
+	for p.HasMoreCommands() {
+		p.Advance()
+
+		switch p.CommandType() {
+		case A_COMMAND, C_COMMAND:
+			romAddress++
+		case L_COMMAND:
+			st.AddEntry(p.Symbol(), romAddress)
+		}
+	}
+
+	// second path
 	for p.HasMoreCommands() {
 		p.Advance()
 		if p.CommandType() == A_COMMAND || p.CommandType() == L_COMMAND {
