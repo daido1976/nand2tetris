@@ -41,24 +41,42 @@ func main() {
 	}
 
 	// second path
+	f.Seek(0, 0)
+	s = bufio.NewScanner(f)
+	p = NewParser(s)
+	ramAddress := 16
+
 	for p.HasMoreCommands() {
 		p.Advance()
-		if p.CommandType() == A_COMMAND || p.CommandType() == L_COMMAND {
-			fmt.Println("Debug:", p.CommandType(), p.currentCommand, "->", p.Symbol())
 
-			i, _ := strconv.Atoi(p.Symbol())
-			out := fmt.Sprintf("%016b", i)
-			// debug result
-			fmt.Println(out)
-			wf.WriteString(out + "\n")
-		} else if p.CommandType() == C_COMMAND {
-			fmt.Println("Debug:", p.CommandType(), p.currentCommand)
-			fmt.Println("Debug:", "dest:"+p.Dest(), "comp:"+p.Comp(), "jump:"+p.Jump())
-
+		switch p.CommandType() {
+		case A_COMMAND:
+			symbol := p.Symbol()
+			address, err := strconv.Atoi(symbol)
+			if err == nil {
+				// Xxx is number
+				out := fmt.Sprintf("%016b", address)
+				wf.WriteString(out + "\n")
+			} else {
+				// Xxx is symbol
+				if st.Contains(symbol) {
+					// known symbol
+					address := st.GetAddress(symbol)
+					out := fmt.Sprintf("%016b", address)
+					wf.WriteString(out + "\n")
+				} else {
+					// new variables
+					st.AddEntry(symbol, ramAddress)
+					out := fmt.Sprintf("%016b", ramAddress)
+					wf.WriteString(out + "\n")
+					ramAddress++
+				}
+			}
+		case C_COMMAND:
 			out := "111" + CodeComp(p.Comp()) + CodeDest(p.Dest()) + CodeJump(p.Jump())
-			// debug result
-			fmt.Println(out)
 			wf.WriteString(out + "\n")
+		case L_COMMAND:
+			// do nothing
 		}
 	}
 }
