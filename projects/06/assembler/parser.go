@@ -79,7 +79,7 @@ func (p *Parser) Symbol() string {
 func (p *Parser) Dest() string {
 	tokens := strings.Split(p.currentCommand, "=")
 	if len(tokens) <= 1 {
-		return "なし"
+		return ""
 	}
 	return tokens[0]
 }
@@ -102,7 +102,7 @@ func (p *Parser) Comp() string {
 func (p *Parser) Jump() string {
 	tokens := strings.Split(p.currentCommand, ";")
 	if len(tokens) <= 1 {
-		return "なし"
+		return ""
 	}
 	return tokens[len(tokens)-1]
 }
