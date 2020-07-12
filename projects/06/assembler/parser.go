@@ -2,8 +2,6 @@ package main
 
 import (
 	"bufio"
-	"fmt"
-	"os"
 	"strings"
 )
 
@@ -21,37 +19,19 @@ const (
 	L_COMMAND                // 3
 )
 
-func main() {
-	f, err := os.Open("projects/06/max/Max.asm")
-	if err != nil {
-		fmt.Println("error")
-	}
-
-	s := bufio.NewScanner(f)
-	p := newParser(s)
-
-	for p.hasMoreCommands() {
-		p.advance()
-		if p.commandType() == A_COMMAND || p.commandType() == L_COMMAND {
-			fmt.Println(p.commandType(), p.currentCommand, "->", p.symbol())
-		} else if p.commandType() == C_COMMAND {
-			fmt.Println(p.commandType(), p.currentCommand)
-			fmt.Println("dest:"+p.dest(), "comp:"+p.comp(), "jump:"+p.jump())
-		} else {
-			fmt.Println(p.commandType(), p.currentCommand)
-		}
-	}
-}
-
-func newParser(s *bufio.Scanner) *Parser {
+// NewParser returns new Parser.
+func NewParser(s *bufio.Scanner) *Parser {
 	return &Parser{s, ""}
 }
 
-func (p *Parser) hasMoreCommands() bool {
+// HasMoreCommands load one line and returns whether the command is still present in the input.
+func (p *Parser) HasMoreCommands() bool {
 	return p.scanner.Scan()
 }
 
-func (p *Parser) advance() {
+// Advance loads the next command and make it the current command.
+// It also removes comments and spaces.
+func (p *Parser) Advance() {
 	p.currentCommand = p.scanner.Text()
 	if len(p.currentCommand) <= 0 {
 		return
@@ -67,7 +47,8 @@ func (p *Parser) advance() {
 	p.currentCommand = strings.TrimSpace(p.currentCommand)
 }
 
-func (p *Parser) commandType() Command {
+// CommandType returns current command type.
+func (p *Parser) CommandType() Command {
 	if p.currentCommand == "" {
 		// empty command
 		return N_COMMAND
@@ -84,8 +65,9 @@ func (p *Parser) commandType() Command {
 	return C_COMMAND
 }
 
-func (p *Parser) symbol() string {
-	if p.commandType() == A_COMMAND {
+// Symbol retunrs @Xxx -> Xxx or (Xxx) -> Xxx.
+func (p *Parser) Symbol() string {
+	if p.CommandType() == A_COMMAND {
 		// A_COMMAND: @Xxx -> Xxx
 		return strings.TrimLeft(p.currentCommand, "@")
 	}
@@ -93,7 +75,8 @@ func (p *Parser) symbol() string {
 	return strings.TrimRight(strings.TrimLeft(p.currentCommand, "("), ")")
 }
 
-func (p *Parser) dest() string {
+// Dest returns dest mnemonic in the C-Instruction.
+func (p *Parser) Dest() string {
 	tokens := strings.Split(p.currentCommand, "=")
 	if len(tokens) <= 1 {
 		return "なし"
@@ -101,7 +84,8 @@ func (p *Parser) dest() string {
 	return tokens[0]
 }
 
-func (p *Parser) comp() string {
+// Comp returns comp mnemonic in the C-Instruction.
+func (p *Parser) Comp() string {
 	tokens := strings.Split(p.currentCommand, "=")
 	if len(tokens) <= 1 {
 		// comp;jump
@@ -114,7 +98,8 @@ func (p *Parser) comp() string {
 	return t[0]
 }
 
-func (p *Parser) jump() string {
+// Jump returns jump mnemonic in the C-Instruction.
+func (p *Parser) Jump() string {
 	tokens := strings.Split(p.currentCommand, ";")
 	if len(tokens) <= 1 {
 		return "なし"
