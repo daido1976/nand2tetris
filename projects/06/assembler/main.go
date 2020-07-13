@@ -10,13 +10,13 @@ import (
 
 func main() {
 	asmFilePath := os.Args[len(os.Args)-1]
-	f, err := os.Open(asmFilePath)
+	rf, err := os.Open(asmFilePath)
 	if err != nil {
 		fmt.Println("error")
 	}
 
-	s := bufio.NewScanner(f)
-	p := NewParser(s)
+	scanner := bufio.NewScanner(rf)
+	parser := NewParser(scanner)
 
 	hackFilePath := strings.ReplaceAll(asmFilePath, ".asm", ".hack")
 	wf, err := os.Create(hackFilePath)
@@ -25,33 +25,33 @@ func main() {
 	}
 
 	// initialize
-	st := NewSymbolTable()
+	symbolTable := NewSymbolTable()
 	romAddress := 0
 
 	// first path
-	for p.HasMoreCommands() {
-		p.Advance()
+	for parser.HasMoreCommands() {
+		parser.Advance()
 
-		switch p.CommandType() {
+		switch parser.CommandType() {
 		case A_COMMAND, C_COMMAND:
 			romAddress++
 		case L_COMMAND:
-			st.AddEntry(p.Symbol(), romAddress)
+			symbolTable.AddEntry(parser.Symbol(), romAddress)
 		}
 	}
 
 	// second path
-	f.Seek(0, 0)
-	s = bufio.NewScanner(f)
-	p = NewParser(s)
+	rf.Seek(0, 0)
+	scanner = bufio.NewScanner(rf)
+	parser = NewParser(scanner)
 	ramAddress := 16
 
-	for p.HasMoreCommands() {
-		p.Advance()
+	for parser.HasMoreCommands() {
+		parser.Advance()
 
-		switch p.CommandType() {
+		switch parser.CommandType() {
 		case A_COMMAND:
-			symbol := p.Symbol()
+			symbol := parser.Symbol()
 			address, err := strconv.Atoi(symbol)
 			if err == nil {
 				// Xxx is number
@@ -59,21 +59,21 @@ func main() {
 				wf.WriteString(out + "\n")
 			} else {
 				// Xxx is symbol
-				if st.Contains(symbol) {
+				if symbolTable.Contains(symbol) {
 					// known symbol
-					address := st.GetAddress(symbol)
+					address := symbolTable.GetAddress(symbol)
 					out := fmt.Sprintf("%016b", address)
 					wf.WriteString(out + "\n")
 				} else {
 					// new variables
-					st.AddEntry(symbol, ramAddress)
+					symbolTable.AddEntry(symbol, ramAddress)
 					out := fmt.Sprintf("%016b", ramAddress)
 					wf.WriteString(out + "\n")
 					ramAddress++
 				}
 			}
 		case C_COMMAND:
-			out := "111" + CodeComp(p.Comp()) + CodeDest(p.Dest()) + CodeJump(p.Jump())
+			out := "111" + CodeComp(parser.Comp()) + CodeDest(parser.Dest()) + CodeJump(parser.Jump())
 			wf.WriteString(out + "\n")
 		case L_COMMAND:
 			// do nothing
