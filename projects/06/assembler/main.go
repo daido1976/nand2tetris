@@ -54,18 +54,18 @@ func main() {
 		switch parser.CommandType() {
 		case A_COMMAND:
 			symbol := parser.Symbol()
-			n, err := strconv.Atoi(symbol)
+			address, err := strconv.Atoi(symbol)
 			if err == nil {
 				// Xxx is number
-				writeAInst(wf, n)
+				writeAInst(wf, address)
 			} else {
 				// Xxx is symbol
 				if symbolTable.Contains(symbol) {
-					// known symbols are converted to addresses
+					// a known symbol is converted to an address
 					address := symbolTable.GetAddress(symbol)
 					writeAInst(wf, address)
 				} else {
-					// unknown symbols are treated as new variables
+					// an unknown symbol is treated as a new variable
 					symbolTable.AddEntry(symbol, ramAddress)
 					writeAInst(wf, ramAddress)
 					ramAddress++
@@ -79,14 +79,15 @@ func main() {
 	}
 }
 
+// writeAInst writes address instruction.
 // mnemonic: @value
 // binary: 0vvv vvvv vvvv vvvv
-func writeAInst(file *os.File, n int) {
-	// n is constant value or address
-	out := fmt.Sprintf("%016b", n)
+func writeAInst(file *os.File, address int) {
+	out := fmt.Sprintf("%016b", address)
 	file.WriteString(out + "\n")
 }
 
+// writeCInst writes comtute instruction.
 // mnemonic: dest=comp;jump
 // binary: 111a cccc ccdd djjj
 func writeCInst(file *os.File, parser *Parser) {
