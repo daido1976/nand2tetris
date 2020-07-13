@@ -55,28 +55,34 @@ func main() {
 			address, err := strconv.Atoi(symbol)
 			if err == nil {
 				// Xxx is number
-				out := fmt.Sprintf("%016b", address)
-				wf.WriteString(out + "\n")
+				writeAddress(wf, address)
 			} else {
 				// Xxx is symbol
 				if symbolTable.Contains(symbol) {
 					// known symbol
 					address := symbolTable.GetAddress(symbol)
-					out := fmt.Sprintf("%016b", address)
-					wf.WriteString(out + "\n")
+					writeAddress(wf, address)
 				} else {
 					// new variables
 					symbolTable.AddEntry(symbol, ramAddress)
-					out := fmt.Sprintf("%016b", ramAddress)
-					wf.WriteString(out + "\n")
+					writeAddress(wf, ramAddress)
 					ramAddress++
 				}
 			}
 		case C_COMMAND:
-			out := "111" + CodeComp(parser.Comp()) + CodeDest(parser.Dest()) + CodeJump(parser.Jump())
-			wf.WriteString(out + "\n")
+			writeCInst(wf, parser)
 		case L_COMMAND:
 			// do nothing
 		}
 	}
+}
+
+func writeAddress(file *os.File, address int) {
+	out := fmt.Sprintf("%016b", address)
+	file.WriteString(out + "\n")
+}
+
+func writeCInst(file *os.File, parser *Parser) {
+	out := "111" + CodeComp(parser.Comp()) + CodeDest(parser.Dest()) + CodeJump(parser.Jump())
+	file.WriteString(out + "\n")
 }
