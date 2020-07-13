@@ -9,26 +9,20 @@ import (
 )
 
 func main() {
+	// open file for reading with last command line args
 	asmFilePath := os.Args[len(os.Args)-1]
 	rf, err := os.Open(asmFilePath)
 	if err != nil {
-		fmt.Println("error")
+		fmt.Println("Error! The file can not open")
 	}
 
+	// initialize scanner & parser
 	scanner := bufio.NewScanner(rf)
 	parser := NewParser(scanner)
 
-	hackFilePath := strings.ReplaceAll(asmFilePath, ".asm", ".hack")
-	wf, err := os.Create(hackFilePath)
-	if err != nil {
-		fmt.Println("error")
-	}
-
-	// initialize
+	// first pass to scan symbol
 	symbolTable := NewSymbolTable()
 	romAddress := 0
-
-	// first path
 	for parser.HasMoreCommands() {
 		parser.Advance()
 
@@ -40,32 +34,40 @@ func main() {
 		}
 	}
 
-	// second path
+	// create file for writing
+	hackFilePath := strings.ReplaceAll(asmFilePath, ".asm", ".hack")
+	wf, err := os.Create(hackFilePath)
+	if err != nil {
+		fmt.Println("Error! The file can not create")
+	}
+
+	// reset scanner & parser
 	rf.Seek(0, 0)
 	scanner = bufio.NewScanner(rf)
 	parser = NewParser(scanner)
-	ramAddress := 16
 
+	// second pass to assemble
+	ramAddress := 16
 	for parser.HasMoreCommands() {
 		parser.Advance()
 
 		switch parser.CommandType() {
 		case A_COMMAND:
 			symbol := parser.Symbol()
-			address, err := strconv.Atoi(symbol)
+			n, err := strconv.Atoi(symbol)
 			if err == nil {
 				// Xxx is number
-				writeAddress(wf, address)
+				writeAInst(wf, n)
 			} else {
 				// Xxx is symbol
 				if symbolTable.Contains(symbol) {
-					// known symbol
+					// known symbols are converted to addresses
 					address := symbolTable.GetAddress(symbol)
-					writeAddress(wf, address)
+					writeAInst(wf, address)
 				} else {
-					// new variables
+					// unknown symbols are treated as new variables
 					symbolTable.AddEntry(symbol, ramAddress)
-					writeAddress(wf, ramAddress)
+					writeAInst(wf, ramAddress)
 					ramAddress++
 				}
 			}
@@ -77,11 +79,16 @@ func main() {
 	}
 }
 
-func writeAddress(file *os.File, address int) {
-	out := fmt.Sprintf("%016b", address)
+// mnemonic: @value
+// binary: 0vvv vvvv vvvv vvvv
+func writeAInst(file *os.File, n int) {
+	// n is constant value or address
+	out := fmt.Sprintf("%016b", n)
 	file.WriteString(out + "\n")
 }
 
+// mnemonic: dest=comp;jump
+// binary: 111a cccc ccdd djjj
 func writeCInst(file *os.File, parser *Parser) {
 	out := "111" + CodeComp(parser.Comp()) + CodeDest(parser.Dest()) + CodeJump(parser.Jump())
 	file.WriteString(out + "\n")
