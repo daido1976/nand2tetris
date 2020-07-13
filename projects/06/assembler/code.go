@@ -20,7 +20,6 @@ func CodeDest(mnemonic string) string {
 	case "AMD":
 		return "111"
 	}
-	// FIXME: error を返すようにした方がいいかも
 	return ""
 }
 
@@ -87,7 +86,6 @@ func CodeComp(mnemonic string) string {
 	case "D|M":
 		return "1010101"
 	}
-	// FIXME: error を返すようにした方がいいかも
 	return ""
 }
 
@@ -111,6 +109,5 @@ func CodeJump(mnemonic string) string {
 	case "JMP":
 		return "111"
 	}
-	// FIXME: error を返すようにした方がいいかも
 	return ""
 }
