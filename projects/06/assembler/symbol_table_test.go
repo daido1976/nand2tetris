@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func TestSymbol_Table(t *testing.T) {
+func TestSymbolTable(t *testing.T) {
 	s := NewSymbolTable()
 
 	if s.Contains("LOOP") {
