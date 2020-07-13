@@ -1,6 +1,6 @@
 package main
 
-// CodeDest returns binary code of dest mnemonic
+// CodeDest returns binary code of dest mnemonic.
 func CodeDest(mnemonic string) string {
 	switch mnemonic {
 	case "":
@@ -23,7 +23,7 @@ func CodeDest(mnemonic string) string {
 	return ""
 }
 
-// CodeComp returns binary code of comp mnemonic
+// CodeComp returns binary code of comp mnemonic.
 func CodeComp(mnemonic string) string {
 	switch mnemonic {
 	// when a=0
@@ -89,7 +89,7 @@ func CodeComp(mnemonic string) string {
 	return ""
 }
 
-// CodeJump returns binary code of jump mnemonic
+// CodeJump returns binary code of jump mnemonic.
 func CodeJump(mnemonic string) string {
 	switch mnemonic {
 	case "":
