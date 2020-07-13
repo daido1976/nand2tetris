@@ -5,11 +5,13 @@ import (
 	"strings"
 )
 
+// Parser parses assembly.
 type Parser struct {
 	scanner        *bufio.Scanner
 	currentCommand string
 }
 
+// Command represents command type.
 type Command int
 
 const (
