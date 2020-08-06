@@ -14,7 +14,8 @@ CHIP Bit {
     OUT out;
 
     PARTS:
-    // load=0 なら読み込み（read）、load=1 なら書き込み（write）
+    // load=1 なら新しい値を出力（書き込み）、load=0 なら内部の値（1つ前の値）を出力（読み込み）
+    // 新しい値とは in のこと、1つ前の値とは DFF から送られてきた feedback のこと
     Mux(a=feedback, b=in, sel=load, out=muxout);
     DFF(in=muxout, out=out, out=feedback);
 }
