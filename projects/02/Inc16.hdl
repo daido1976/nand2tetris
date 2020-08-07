@@ -13,5 +13,6 @@ CHIP Inc16 {
     OUT out[16];
 
     PARTS:
+    // 定数として true は `1`、false は `0` を表す
     Add16(a=in, b[0]=true, b[1..15]=false, out=out);
 }
