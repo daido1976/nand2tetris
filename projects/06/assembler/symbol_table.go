@@ -45,6 +45,6 @@ func (s SymbolTable) Contains(symbol string) bool {
 
 // GetAddress returns the address associated with the symbol.
 func (s SymbolTable) GetAddress(symbol string) int {
-	address, _ := s[symbol]
+	address := s[symbol]
 	return address
 }
